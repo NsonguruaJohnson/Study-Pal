@@ -3,17 +3,31 @@
 	// Initialize session
 	session_start();
 
+	// $user = "";
 	// Check to see if the user is already looged in, if yes then redirect user to welcome page
+	// if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+		
+	// 	header("location: dashboard.php");
+	// 	exit();
+	// }
+
 	if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
 		header("location: dashboard.php");
 		exit();
 	}
 
+	if (isset($_COOKIE['userid']) || isset($_COOKIE['useremail'])){
+		header("location: dashboard.php");
+	}
+
+	
+
+
 	// Include config file
     require_once('config/connect.php');
 	
 	// Define variables and initialize with empty values
-	$email = $password = $emailErr = $passwordErr = "";
+	$email = $password = $emailErr = $passwordErr = $rememberMe = "";
 
 	// Processing form data when form is submitted
 	if ($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -70,10 +84,27 @@
 								$_SESSION["id"] = $id;
 								$_SESSION["email"] = $email;
 
+
+
 								// Redirect user to dashboardpage
 								header("location: dashboard.php");
 							} else {
 								$passwordErr = "The password you entered is incorrect.";
+							}
+
+							if (isset($_POST['rememberMe'])){
+		
+								if($_POST['rememberMe'] == "on"){
+
+									$hour = time() + 3600; // 1 hour
+									// $id = $_SESSION['id'];
+									// $email = $_SESSION['email'];
+									setcookie('userid', $id, $hour);
+									setcookie('useremail', $email, $hour);
+									// setcookie('active', 1, $hour);
+									// header('location: dashboard.php');
+								}
+
 							}
 
 						}
@@ -93,6 +124,24 @@
 			}
 
 		}
+
+		// var_dump($_POST);
+		// if (isset($_POST['rememberMe'])){
+		
+		// 	if($_POST['rememberMe'] == "on"){
+
+		// 		$hour = time() + 3600; // 1 hour
+		// 		// $id = $_SESSION['id'];
+		// 		// $email = $_SESSION['email'];
+		// 		setcookie('userid', $row["id"], $hour);
+		// 		setcookie('useremail', $row["email"], $hour);
+		// 		setcookie('active', 1, $hour);
+		// 		// header('location: dashboard.php');
+		// 	}
+
+		// }
+
+		// var_dump($_POST);
 
 		// Close connection
 		unset($pdo);
@@ -128,12 +177,13 @@
  			<span class="error"><?php echo $passwordErr ?></span>
  		</div>
  		<br>
- 		<div>
- 			<input type="submit" name="submit" value="LOGIN">
- 		</div>
+ 		
  		<div>
  			<label>Remember Me</label>
- 			<input type="checkbox" name="rememberMe">
+ 			<input type="checkbox" name="rememberMe" value="on">
+ 		</div>
+ 		<div>
+ 			<input type="submit" name="submit" value="LOGIN">
  		</div>
  		<p><a href="forgotpassword.php">Forgot Password</a></p>
  		

@@ -4,10 +4,21 @@
 	session_start();
 
 	// Check if the user is logged in, if not then redirect to login page
-	if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+	// if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){	
+	// 	header("location: login.php");
+	// 	exit();
+	// }
+	if(!isset($_COOKIE['userid']) || !isset($_COOKIE['useremail'])){
+		if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true){
 		header("location: login.php");
-		exit();
+			exit();
+		}
+		
+		
 	}
+
+
+	
 
 	// Include config file
 	require_once("config/connect.php");
@@ -38,6 +49,11 @@
 							$hashedPassword = $row["password"];
 							if(!password_verify($password,$hashedPassword)){
 								$passwordErr = "Password does not match this account. Check password";
+							} else {
+								session_start();
+								$_SESSION = array();
+								header("location: login.php");
+								exit;
 							}
 						}
 					} else {
@@ -70,6 +86,17 @@
 		}
 	}
 
+	// if(isset($_POST['confirmPassword'])){
+	// 	if(empty($_POST['confirmPassword'])){
+	// 	$confirmPasswordErr = "Please confirm password";
+	// } else {
+	// 	$confirmPassword = $_POST['confirmPassword'];
+	// 	if (empty($newPasswordErr) && ($newPassword != $confirmPassword)){
+	// 		$confirmPasswordErr = "Password did not match";
+	// 	}
+	// }
+
+	// }
 	// Validate confirm password
 	if(empty($_POST['confirmPassword'])){
 		$confirmPasswordErr = "Please confirm password";
@@ -146,7 +173,7 @@
 		</div>
 		<br>
 		<div>
-			<input type="submit" name="submit" value="confirm">
+			<input type="submit" name="submit" value="Confirm">
 		</div>
 	</form>
 

@@ -132,6 +132,9 @@
 	<div>
 		<input type="submit" name="submit" value="Signup">
 	</div>
+    <div>
+        <p><a href="login.php">Login</a></p>
+    </div>
 
 </form>
     
